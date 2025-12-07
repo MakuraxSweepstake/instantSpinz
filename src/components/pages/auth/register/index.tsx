@@ -300,7 +300,7 @@ export default function RegisterPage() {
                                     fullWidth
                                     id="city"
                                     name="city"
-                                    placeholder="Ex. "
+                                    placeholder="Ex.Louisville "
                                     value={values.city}
                                     onChange={handleChange}
                                     onBlur={handleBlur}
@@ -317,7 +317,7 @@ export default function RegisterPage() {
                                     fullWidth
                                     id="zip_code"
                                     name="zip_code"
-                                    placeholder="Ex. "
+                                    placeholder="Ex. 40223"
                                     value={values.zip_code}
                                     onChange={handleChange}
                                     onBlur={handleBlur}
@@ -413,7 +413,7 @@ export default function RegisterPage() {
                                     fullWidth
                                     id="street"
                                     name="street"
-                                    placeholder="Enter Street"
+                                    placeholder="Ex. 123 Main St"
                                     value={values.street}
                                     onChange={handleChange}
                                     onBlur={handleBlur}
