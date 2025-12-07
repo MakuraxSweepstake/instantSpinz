@@ -8,17 +8,15 @@ import { showToast, ToastVariant } from "@/slice/toastSlice";
 import { Button } from "@mui/material";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect } from "react";
+import { Suspense, useEffect } from "react";
 
-export default function AssureError() {
+function AssureErrorContent() {
     const searchParams = useSearchParams();
     const router = useRouter();
     const dispatch = useAppDispatch();
 
     const id = searchParams.get("user_id");
     const hash = searchParams.get("hash");
-
-
 
     const [assureFail, { isLoading }] = useAssureFailMutation();
 
@@ -59,7 +57,7 @@ export default function AssureError() {
         };
 
         processFailure();
-    }, [id, hash]);
+    }, [id, hash, dispatch, router, assureFail]);
 
     return (
         <GlassWrapper className="max-w-[520px] mx-auto flex flex-col gap-4 items-center text-center p-6 mt-10">
@@ -88,5 +86,17 @@ export default function AssureError() {
                 {isLoading ? "Processing..." : "Go to Register"}
             </Button>
         </GlassWrapper>
+    );
+}
+
+export default function AssureError() {
+    return (
+        <Suspense fallback={
+            <GlassWrapper className="max-w-[520px] mx-auto flex flex-col gap-4 items-center text-center p-6 mt-10">
+                <div className="animate-pulse">Loading...</div>
+            </GlassWrapper>
+        }>
+            <AssureErrorContent />
+        </Suspense>
     );
 }
