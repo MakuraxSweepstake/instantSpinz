@@ -2,6 +2,7 @@
 
 import GlassWrapper from '@/components/molecules/GlassWrapper';
 import { useAppDispatch } from '@/hooks/hook';
+import { PATH } from '@/routes/PATH';
 import { useSendVerificationLinkAgainMutation, useVerifyEmailMutation } from '@/services/authApi';
 import { showToast, ToastVariant } from '@/slice/toastSlice';
 import { Button } from '@mui/material';
@@ -51,7 +52,7 @@ function VerifyEmailContent() {
                     autoTime: true,
                 }),
             );
-            router.replace(response?.data?.redirect_url);
+            router.replace(PATH.AUTH.LOGIN.ROOT);
         } catch (e: any) {
             dispatch(
                 showToast({

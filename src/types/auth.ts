@@ -27,6 +27,7 @@ export interface LoginResponse {
         access_token: string,
         // expires_in: 3600,
         user: User,
+        redirect_url:string;
     }
     message: string
 }
