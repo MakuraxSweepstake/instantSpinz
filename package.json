@@ -29,7 +29,7 @@
     "framer-motion": "^12.23.16",
     "js-cookie": "^3.0.5",
     "lightgallery": "^2.9.0-beta.1",
-    "next": "15.5.3",
+    "next": "^16.0.7",
     "nprogress": "^0.2.0",
     "react": "^19.2.1",
     "react-apexcharts": "^1.7.0",
@@ -50,7 +50,7 @@
     "@types/react-date-range": "^1.4.10",
     "@types/react-dom": "^19",
     "eslint": "^9",
-    "eslint-config-next": "15.5.3",
+    "eslint-config-next": "^16.0.7",
     "tailwindcss": "^4",
     "typescript": "^5"
   }
