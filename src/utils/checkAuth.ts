@@ -1,6 +1,5 @@
 // utils/CheckAuth.ts
 import Cookies from "js-cookie";
-import { cookies as nextCookies } from "next/headers";
 
 function isTokenExpired(token: string): boolean {
     try {
