@@ -1,22 +1,21 @@
 'use client';
 
-import React from 'react'
-import AuthMessageBlock from '../authMessageBlock'
-import { Box, InputLabel, OutlinedInput } from '@mui/material';
-import * as Yup from 'yup';
-import { useRouter } from 'next/navigation';
-import { Formik, useFormik } from 'formik';
-import Link from 'next/link';
-import { PATH } from '@/routes/PATH';
-import { useRegisterUserMutation, useSendVerificationLinkAgainMutation } from '@/services/authApi';
-import { useAppDispatch } from '@/hooks/hook';
-import { showToast, ToastVariant } from '@/slice/toastSlice';
 import PasswordField from '@/components/molecules/PasswordField';
-import { ArrowLeft } from '@wandersonalwes/iconsax-react';
+import { useAppDispatch } from '@/hooks/hook';
+import { PATH } from '@/routes/PATH';
+import { useRegisterUserMutation } from '@/services/authApi';
+import { showToast, ToastVariant } from '@/slice/toastSlice';
+import { Box, InputLabel, MenuItem, OutlinedInput, Select } from '@mui/material';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { ArrowLeft } from '@wandersonalwes/iconsax-react';
 import dayjs, { Dayjs } from 'dayjs';
+import { useFormik } from 'formik';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import * as Yup from 'yup';
+import AuthMessageBlock from '../authMessageBlock';
 
 const formFieldSx = {
     '& .MuiOutlinedInput-root, & .MuiPickersInputBase-root, & .MuiPickersOutlinedInput-root': {
@@ -93,9 +92,11 @@ const validationSchema = Yup.object().shape({
     first_name: Yup.string().required('First name is required'),
     middle_name: Yup.string(),
     last_name: Yup.string().required('Last name is required'),
-    photoid_number: Yup.string(),
-    city: Yup.string(),
-    pob: Yup.string(),
+    photoid_number: Yup.string().required("SSN Number is required"),
+    city: Yup.string().required("City Name is required"),
+    street: Yup.string().required("Street Name is required"),
+    zip_code: Yup.string().required("Zip Code is required"),
+    pob: Yup.string().required("State is required"),
 })
 
 export default function RegisterPage() {
@@ -115,6 +116,8 @@ export default function RegisterPage() {
         dob: null as Dayjs | null,
         city: '',
         pob: '',
+        street: '',
+        zip_code: '',
     }
     const { handleSubmit, handleBlur, handleChange, errors, dirty, values, touched, setFieldValue, setFieldTouched } = useFormik(
         {
@@ -136,6 +139,8 @@ export default function RegisterPage() {
                         dob: formattedDob,
                         city: values.city,
                         pob: values.pob,
+                        street: values.street,
+                        zip_code: values.zip_code
                     }).unwrap();
 
                     dispatch(
@@ -229,7 +234,7 @@ export default function RegisterPage() {
                         </div>
 
                         {/* EMAIL */}
-                        <div className="col-span-2 lg:col-span-6">
+                        <div className="col-span-2 lg:col-span-3">
                             <div className="input_field">
                                 <InputLabel htmlFor="emailAddress">Email Address<span className="text-red-500">*</span></InputLabel>
                                 <OutlinedInput
@@ -270,14 +275,14 @@ export default function RegisterPage() {
 
 
                         {/* Photo ID */}
-                        <div className="col-span-2 lg:col-span-3">
+                        <div className="col-span-2 lg:col-span-2">
                             <div className="input__field">
-                                <InputLabel htmlFor="photoid_number">Photo ID</InputLabel>
+                                <InputLabel htmlFor="photoid_number">SSN <span className="text-red-500">*</span></InputLabel>
                                 <OutlinedInput
                                     fullWidth
                                     id="photoid_number"
                                     name="photoid_number"
-                                    placeholder="Enter photo ID"
+                                    placeholder="Enter SSN"
                                     value={values.photoid_number}
                                     onChange={handleChange}
                                     onBlur={handleBlur}
@@ -288,14 +293,14 @@ export default function RegisterPage() {
                         </div>
 
                         {/* Address */}
-                        <div className="col-span-2 lg:col-span-3">
+                        <div className="col-span-2 lg:col-span-2">
                             <div className="input__field">
-                                <InputLabel htmlFor="city">City</InputLabel>
+                                <InputLabel htmlFor="city">City <span className="text-red-500">*</span></InputLabel>
                                 <OutlinedInput
                                     fullWidth
                                     id="city"
                                     name="city"
-                                    placeholder="Enter city"
+                                    placeholder="Ex. "
                                     value={values.city}
                                     onChange={handleChange}
                                     onBlur={handleBlur}
@@ -304,27 +309,120 @@ export default function RegisterPage() {
                                 <span className="error">{touched.city && errors.city}</span>
                             </div>
                         </div>
-
-                        {/* Country */}
-                        <div className="col-span-2 lg:col-span-3">
+                        {/* Address */}
+                        <div className="col-span-2 lg:col-span-2">
                             <div className="input__field">
-                                <InputLabel htmlFor="pob">Place of Birth</InputLabel>
+                                <InputLabel htmlFor="zip_code">Zip Code <span className="text-red-500">*</span></InputLabel>
                                 <OutlinedInput
                                     fullWidth
-                                    id="pob"
-                                    name="pob"
-                                    placeholder="Enter Place of Birth"
-                                    value={values.pob}
+                                    id="zip_code"
+                                    name="zip_code"
+                                    placeholder="Ex. "
+                                    value={values.zip_code}
                                     onChange={handleChange}
                                     onBlur={handleBlur}
                                     sx={formFieldSx}
                                 />
+                                <span className="error">{touched.zip_code && errors.zip_code}</span>
+                            </div>
+                        </div>
+
+                        {/* Country */}
+                        <div className="col-span-2 lg:col-span-3">
+                            <div className="input__field">
+                                <InputLabel htmlFor="pob">State</InputLabel>
+
+                                <Select
+                                    fullWidth
+                                    id="pob"
+                                    name="pob"
+                                    displayEmpty
+                                    value={values.pob}
+                                    onChange={handleChange}
+                                    onBlur={handleBlur}
+                                    sx={formFieldSx}
+                                    renderValue={(selected) =>
+                                        selected === "" ? "Select a State" : selected
+                                    }
+                                >
+                                    <MenuItem value="">
+                                        <em>Select a State</em>
+                                    </MenuItem>
+
+                                    <MenuItem value="AL">Alabama</MenuItem>
+                                    <MenuItem value="AK">Alaska</MenuItem>
+                                    <MenuItem value="AZ">Arizona</MenuItem>
+                                    <MenuItem value="AR">Arkansas</MenuItem>
+                                    <MenuItem value="CA">California</MenuItem>
+                                    <MenuItem value="CO">Colorado</MenuItem>
+                                    <MenuItem value="CT">Connecticut</MenuItem>
+                                    <MenuItem value="DE">Delaware</MenuItem>
+                                    <MenuItem value="DC">District Of Columbia</MenuItem>
+                                    <MenuItem value="FL">Florida</MenuItem>
+                                    <MenuItem value="GA">Georgia</MenuItem>
+                                    <MenuItem value="HI">Hawaii</MenuItem>
+                                    <MenuItem value="ID">Idaho</MenuItem>
+                                    <MenuItem value="IL">Illinois</MenuItem>
+                                    <MenuItem value="IN">Indiana</MenuItem>
+                                    <MenuItem value="IA">Iowa</MenuItem>
+                                    <MenuItem value="KS">Kansas</MenuItem>
+                                    <MenuItem value="KY">Kentucky</MenuItem>
+                                    <MenuItem value="LA">Louisiana</MenuItem>
+                                    <MenuItem value="ME">Maine</MenuItem>
+                                    <MenuItem value="MD">Maryland</MenuItem>
+                                    <MenuItem value="MA">Massachusetts</MenuItem>
+                                    <MenuItem value="MI">Michigan</MenuItem>
+                                    <MenuItem value="MN">Minnesota</MenuItem>
+                                    <MenuItem value="MS">Mississippi</MenuItem>
+                                    <MenuItem value="MO">Missouri</MenuItem>
+                                    <MenuItem value="MT">Montana</MenuItem>
+                                    <MenuItem value="NE">Nebraska</MenuItem>
+                                    <MenuItem value="NV">Nevada</MenuItem>
+                                    <MenuItem value="NH">New Hampshire</MenuItem>
+                                    <MenuItem value="NJ">New Jersey</MenuItem>
+                                    <MenuItem value="NM">New Mexico</MenuItem>
+                                    <MenuItem value="NY">New York</MenuItem>
+                                    <MenuItem value="NC">North Carolina</MenuItem>
+                                    <MenuItem value="ND">North Dakota</MenuItem>
+                                    <MenuItem value="OH">Ohio</MenuItem>
+                                    <MenuItem value="OK">Oklahoma</MenuItem>
+                                    <MenuItem value="OR">Oregon</MenuItem>
+                                    <MenuItem value="PA">Pennsylvania</MenuItem>
+                                    <MenuItem value="RI">Rhode Island</MenuItem>
+                                    <MenuItem value="SC">South Carolina</MenuItem>
+                                    <MenuItem value="SD">South Dakota</MenuItem>
+                                    <MenuItem value="TN">Tennessee</MenuItem>
+                                    <MenuItem value="TX">Texas</MenuItem>
+                                    <MenuItem value="UT">Utah</MenuItem>
+                                    <MenuItem value="VT">Vermont</MenuItem>
+                                    <MenuItem value="VA">Virginia</MenuItem>
+                                    <MenuItem value="WA">Washington</MenuItem>
+                                    <MenuItem value="WV">West Virginia</MenuItem>
+                                    <MenuItem value="WI">Wisconsin</MenuItem>
+                                    <MenuItem value="WY">Wyoming</MenuItem>
+                                </Select>
+
                                 <span className="error">{touched.pob && errors.pob}</span>
                             </div>
                         </div>
 
-
-
+                        <div className="col-span-2 lg:col-span-3">
+                            <div className="input__field">
+                                <InputLabel htmlFor="street">Street <span className="text-red-500">*</span></InputLabel>
+                                <OutlinedInput
+                                    fullWidth
+                                    id="street"
+                                    name="street"
+                                    placeholder="Enter Street"
+                                    value={values.street}
+                                    onChange={handleChange}
+                                    onBlur={handleBlur}
+                                />
+                                <span className="error">
+                                    {touched.street && errors.street ? errors.street : ""}
+                                </span>
+                            </div>
+                        </div>
                         <div className="col-span-2 lg:col-span-3">
                             <div className="input__field">
                                 <InputLabel htmlFor="phone">Phone <span className="text-red-500">*</span></InputLabel>

@@ -15,7 +15,9 @@ export interface User {
     profile_image: string;
     wallet_address: string;
     address: string;
-    city: string
+    city: string;
+    street: string;
+    zip_code: string;
     role: RoleProps;
 }
 
@@ -39,4 +41,6 @@ export interface RegisterProps extends LoginProps {
     dob: string;
     city: string;
     pob: string;
+    street: string;
+    zip_code: string;
 }

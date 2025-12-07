@@ -2,14 +2,12 @@
 
 import GlassWrapper from '@/components/molecules/GlassWrapper';
 import { useAppDispatch } from '@/hooks/hook';
-import { PATH } from '@/routes/PATH';
 import { useSendVerificationLinkAgainMutation, useVerifyEmailMutation } from '@/services/authApi';
 import { showToast, ToastVariant } from '@/slice/toastSlice';
-import { Box, Button } from '@mui/material';
+import { Button } from '@mui/material';
 import Image from 'next/image';
-import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import React, { Suspense } from 'react';
+import { Suspense } from 'react';
 
 function VerifyEmailContent() {
     const router = useRouter();
@@ -31,6 +29,7 @@ function VerifyEmailContent() {
                     autoTime: true,
                 }),
             );
+
         } catch (e: any) {
             dispatch(
                 showToast({
@@ -52,7 +51,7 @@ function VerifyEmailContent() {
                     autoTime: true,
                 }),
             );
-            router.replace(PATH.AUTH.LOGIN.ROOT);
+            router.replace(response?.data?.redirect_url);
         } catch (e: any) {
             dispatch(
                 showToast({
