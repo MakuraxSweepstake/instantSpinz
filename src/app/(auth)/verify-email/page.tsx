@@ -91,7 +91,7 @@ function VerifyEmailContent() {
                 the email address you entered is correct. Still not found?
             </p>
             <Button fullWidth variant="contained" color="secondary" onClick={handleLinkResend}>
-                {sendingLink ? "Sending Again..." : "Send Again"}
+                {sendingLink ? "Sending Email..." : "Send Email"}
             </Button>
         </GlassWrapper >
     );
