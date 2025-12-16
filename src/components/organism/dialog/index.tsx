@@ -24,10 +24,10 @@ export default function AgeVerificationModal() {
             open={open}
             disableEscapeKeyDown
             disableScrollLock
-            keepMounted={false}   // ✅ IMPORTANT
+            keepMounted={false}  
             aria-labelledby="age-verification-dialog"
             sx={{
-                pointerEvents: open ? "auto" : "none", // ✅ prevent blocking clicks
+                pointerEvents: open ? "auto" : "none", 
                 "& .MuiBackdrop-root": {
                     backdropFilter: "blur(8px)",
                     backgroundColor: "rgba(0, 0, 0, 0.4)",
