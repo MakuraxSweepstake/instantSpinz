@@ -28,7 +28,7 @@ export default function Activities() {
 
 
     const [search, setSearch] = React.useState("");
-    const [page, setPage] = React.useState(1);
+    const [pageIndex, setPageIndex] = React.useState(1);
     const [status, setStatus] = React.useState<TransactionStatusProps | undefined>();
     const [pageSize, setPageSize] = React.useState(10);
     const [activityType, setActivityType] = React.useState("");
@@ -36,13 +36,13 @@ export default function Activities() {
     // const [download, { isLoading: downloading }] = useStartDownloadMutation();
     const queryArgs = useMemo(
         () => ({
-            page,
-            per_page: pageSize,
+            pageIndex,
+            pageSize,
             search: search || "",
             activity_type: activityType,
             status
         }),
-        [page, pageSize, search, status, activityType]
+        [pageIndex, pageSize, search, status, activityType]
     );
 
 
@@ -169,7 +169,7 @@ export default function Activities() {
             />
 
             <CustomTable
-                key={`${page}-${pageSize}-${search}-${activityType}`}
+                key={`${pageIndex}-${pageSize}-${search}-${activityType}`}
                 table={table}
                 loading={isLoading}
             />
@@ -190,8 +190,8 @@ export default function Activities() {
                     </select>
                 </div>
                 <Pagination count={data?.data?.pagination?.total_pages || 1}
-                    page={page}
-                    onChange={(_, value) => setPage(value)} variant="outlined" shape="rounded" sx={{ gap: "8px" }} />
+                    page={pageIndex}
+                    onChange={(_, value) => setPageIndex(value)} variant="outlined" shape="rounded" sx={{ gap: "8px" }} />
             </div>
         </div>
     );

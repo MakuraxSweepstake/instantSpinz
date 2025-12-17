@@ -16,11 +16,11 @@ export default function GeneralPageLiting() {
     const dispatch = useAppDispatch();
     const [search, setSearch] = useState("");
     const [sorting, setSorting] = useState<{ id: string; desc: boolean }[]>([]);
-    const [page, setPage] = useState(1);
+    const [pageIndex, setPageIndex] = useState(1);
     const [pageSize, setPageSize] = useState(10);
     const { data, isLoading: loadingPages } = useGetAllPageQuery({
-        page,
-        per_page: pageSize,
+        pageIndex,
+        pageSize,
         search: search || ""
     });
     const [deletePage, { isLoading: deleting }] = useDeletePageByIdMutation();
@@ -138,8 +138,8 @@ export default function GeneralPageLiting() {
                         </select>
                     </div>
                     <Pagination count={data?.data?.pagination?.total_pages || 1}
-                        page={page}
-                        onChange={(_, value) => setPage(value)} variant="outlined" shape="rounded" sx={{ gap: "8px" }} />
+                        page={pageIndex}
+                        onChange={(_, value) => setPageIndex(value)} variant="outlined" shape="rounded" sx={{ gap: "8px" }} />
                 </div>
             </div>
         </section>

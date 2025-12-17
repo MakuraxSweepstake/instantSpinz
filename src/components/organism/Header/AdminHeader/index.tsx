@@ -16,9 +16,9 @@ export default function AdminHeader() {
   // React.useEffect(() => {
   //   setMounted(true);
   // }, []);
-  const [page, setPage] = React.useState(1);
+  const [pageIndex, setPageIndex] = React.useState(1);
   const [pageSize, setPageSize] = React.useState(10);
-  const { data } = useGetAllNotificationQuery({ page: page, per_page: pageSize });
+  const { data } = useGetAllNotificationQuery({ pageIndex, pageSize });
   return (
     <Box className='flex items-center gap-4 justify-end w-full'>
       {/* <AdminSearchBar /> */}

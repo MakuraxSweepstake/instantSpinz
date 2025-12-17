@@ -26,11 +26,11 @@ export const playerApi = createApi({
 
         // GET ALL Players
         getAllPlayer: builder.query<PlayerListResponse, QueryParams>({
-            query: ({ search, page, per_page, status }) => {
+            query: ({ search, pageIndex, pageSize, status }) => {
                 const params = new URLSearchParams();
                 if (search) params.append("search", search);
-                if (page) params.append("page", page.toString());
-                if (per_page) params.append("page_size", per_page.toString());
+                if (pageIndex) params.append("page", pageIndex.toString());
+                if (pageSize) params.append("page_size", pageSize.toString());
                 if (status) params.append("status", status.toString());
                 const queryString = params.toString();
                 return {

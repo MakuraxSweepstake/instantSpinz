@@ -15,13 +15,13 @@ export default function DepositHistoryPage(
       currentFilter: number | null;
       customRange: { startDate: string | null, endDate: string | null }
     }) {
-  const [page, setPage] = useState(1);
+  const [pageIndex, setPageIndex] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const { data, isLoading } = useGetAllDepositQuery({
     days: currentFilter,
     customRange,
-    page,
-    per_page: pageSize
+    pageIndex: pageIndex,
+    pageSize: pageSize
   });
   const columns: ColumnDef<SingleDepositProps>[] = [
     {
@@ -77,8 +77,8 @@ export default function DepositHistoryPage(
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mt-4 px-8 py-6 gap-4">
 
         <Pagination count={data?.data?.pagination?.total_pages || 1}
-          page={page}
-          onChange={(_, value) => setPage(value)} variant="outlined" shape="rounded" sx={{ gap: "8px" }} />
+          page={pageIndex}
+          onChange={(_, value) => setPageIndex(value)} variant="outlined" shape="rounded" sx={{ gap: "8px" }} />
         <div>
           <span>Row per page:</span>
           <select

@@ -18,11 +18,11 @@ export const transactionApi = createApi({
             invalidatesTags: ["Deposit"]
         }),
         getAllDeposit: builder.query<DepositListProps, QueryParams & { days: number | null; customRange: { startDate: string | null; endDate: string | null } }>({
-            query: ({ search, page, per_page, days, customRange }) => {
+            query: ({ search, pageIndex, pageSize, days, customRange }) => {
                 const params = new URLSearchParams();
                 if (search) params.append('search', search);
-                if (page) params.append('page', page.toString());
-                if (per_page) params.append('page_size', per_page.toString());
+                if (pageIndex) params.append('page', pageIndex.toString());
+                if (pageSize) params.append('page_size', pageSize.toString());
                 if (days) params.append('days', days.toString());
                 if (customRange.startDate) params.append('start_date', customRange.startDate.toString());
                 if (customRange.endDate) params.append('end_date', customRange.endDate.toString());
@@ -43,11 +43,11 @@ export const transactionApi = createApi({
             invalidatesTags: ["Withdrawl"]
         }),
         getAllWithdrawl: builder.query<DepositListProps, QueryParams & { days: number | null; customRange: { startDate: string | null; endDate: string | null } }>({
-            query: ({ search, page, per_page, days, customRange }) => {
+            query: ({ search, pageIndex, pageSize, days, customRange }) => {
                 const params = new URLSearchParams();
                 if (search) params.append('search', search);
-                if (page) params.append('page', page.toString());
-                if (per_page) params.append('page_size', per_page.toString());
+                if (pageIndex) params.append('page', pageIndex.toString());
+                if (pageSize) params.append('page_size', pageSize.toString());
                 if (days) params.append('days', days.toString());
                 if (customRange.startDate) params.append('start_date', customRange.startDate.toString());
                 if (customRange.endDate) params.append('end_date', customRange.endDate.toString());
@@ -61,11 +61,11 @@ export const transactionApi = createApi({
             providesTags: ["Withdrawl"]
         }),
         getAllTransaction: builder.query<DepositListProps, QueryParams & { status?: TransactionStatusProps; user_id?: string | number; game_id?: string | number, selectedGame?: string; selectedTransactionType?: string, start_date?: string; end_date?: string; }>({
-            query: ({ search, page, per_page, user_id, game_id, status, selectedGame, selectedTransactionType, start_date, end_date }) => {
+            query: ({ search, pageIndex, pageSize, user_id, game_id, status, selectedGame, selectedTransactionType, start_date, end_date }) => {
                 const params = new URLSearchParams();
                 if (search) params.append('search', search);
-                if (page) params.append('page', page.toString());
-                if (per_page) params.append('page_size', per_page.toString());
+                if (pageIndex) params.append('page', pageIndex.toString());
+                if (pageSize) params.append('page_size', pageSize.toString());
                 if (user_id) params.append('user', user_id.toString());
                 if (game_id) params.append('game', game_id.toString());
                 if (status) params.append('status', status.toString());

@@ -1,7 +1,7 @@
+import { GlobalResponse, QueryParams } from "@/types/config";
+import { ActivityResponse, NotificationResponse } from "@/types/notification";
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { baseQuery } from "./baseQuery";
-import { ActivityResponse, NotificationResponse } from "@/types/notification";
-import { GlobalResponse, QueryParams } from "@/types/config";
 
 export const notificationApi = createApi({
     reducerPath: "notificationApi",
@@ -9,11 +9,11 @@ export const notificationApi = createApi({
     tagTypes: ['Notification', "Activity"],
     endpoints: (builder) => ({
         getAllNotification: builder.query<NotificationResponse, QueryParams>({
-            query: ({ search, page, per_page }) => {
+            query: ({ search, pageIndex, pageSize }) => {
                 const params = new URLSearchParams();
                 if (search) params.append('search', search);
-                if (page) params.append('page', page.toString());
-                if (per_page) params.append('page_size', per_page.toString());
+                if (pageIndex) params.append('page', pageIndex.toString());
+                if (pageSize) params.append('page_size', pageSize.toString());
                 const queryString = params.toString();
                 return {
                     url: `/api/admin/notifications${queryString ? `?${queryString}` : ''}`,
@@ -37,11 +37,11 @@ export const notificationApi = createApi({
             invalidatesTags: ["Notification"]
         }),
         getAllActivity: builder.query<ActivityResponse, { activity_type: string, status?: string } & QueryParams>({
-            query: ({ search, page, per_page, activity_type, status }) => {
+            query: ({ search, pageIndex, pageSize, activity_type, status }) => {
                 const params = new URLSearchParams();
                 if (search) params.append('search', search);
-                if (page) params.append('page', page.toString());
-                if (per_page) params.append('page_size', per_page.toString());
+                if (pageIndex) params.append('page', pageIndex.toString());
+                if (pageSize) params.append('page_size', pageSize.toString());
                 if (activity_type) params.append('type', activity_type.toString());
                 if (status) params.append('status', status.toString());
                 const queryString = params.toString();

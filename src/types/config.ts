@@ -33,8 +33,8 @@ export interface GlobalResponse {
 }
 
 export interface QueryParams {
-    page?: number;
-    per_page?: number;
+    pageIndex?: number;
+    pageSize?: number;
     search?: string;
     status?: string;
 }

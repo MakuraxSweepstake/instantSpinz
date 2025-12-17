@@ -3,32 +3,32 @@
 import CustomSwitch from '@/components/atom/Switch';
 import ActionGroup from '@/components/molecules/Action';
 import TabController from '@/components/molecules/TabController';
-import TableHeader from '@/components/molecules/TableHeader'
+import TableHeader from '@/components/molecules/TableHeader';
 import CustomTable from '@/components/organism/Table';
 import { useAppDispatch } from '@/hooks/hook';
 import { PATH } from '@/routes/PATH';
 import { useDownloadUserMutation } from '@/services/downloadApi';
 import { useDeletePlayerByIdMutation, useGetAllPlayerQuery, useSuspendPlayerByIdMutation } from '@/services/playerApi';
 import { showToast, ToastVariant } from '@/slice/toastSlice';
-import { PlayerItem, PlayerProps } from '@/types/player';
+import { PlayerItem } from '@/types/player';
 import { formatDateTime } from '@/utils/formatDateTime';
 import { getInitials } from '@/utils/getInitials';
 import { Box, Checkbox, Pagination } from '@mui/material';
 import { ColumnDef, getCoreRowModel, getPaginationRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table';
 import { useRouter } from 'next/navigation';
-import React, { useMemo, useState } from 'react'
+import React, { useMemo, useState } from 'react';
 
 export default function PlayerListing() {
     const router = useRouter();
     const dispatch = useAppDispatch();
     const [search, setSearch] = useState("");
     const [sorting, setSorting] = useState<{ id: string; desc: boolean }[]>([]);
-    const [page, setPage] = useState(1);
+    const [pageIndex, setPageIndex] = useState(1);
     const [pageSize, setPageSize] = useState(10);
     const [currentTab, setCurrentTab] = React.useState("");
     const { data, isLoading: loadingPlayer } = useGetAllPlayerQuery({
-        page,
-        per_page: pageSize,
+        pageIndex,
+        pageSize,
         search: search || "",
         status: currentTab || ""
     });
@@ -199,17 +199,9 @@ export default function PlayerListing() {
         columns,
         state: {
             sorting,
-            pagination: {
-                pageIndex: page - 1,
-                pageSize: pageSize,
-            },
+
         },
         onSortingChange: setSorting,
-        onPaginationChange: (updater) => {
-            const newState = typeof updater === "function" ? updater({ pageIndex: page - 1, pageSize }) : updater;
-            setPage(newState.pageIndex + 1);
-            setPageSize(newState.pageSize);
-        },
         getCoreRowModel: getCoreRowModel(),
         getSortedRowModel: getSortedRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
@@ -287,8 +279,8 @@ export default function PlayerListing() {
                         </select>
                     </div>
                     <Pagination count={data?.data?.pagination?.total_pages || 1}
-                        page={page}
-                        onChange={(_, value) => setPage(value)} variant="outlined" shape="rounded" sx={{ gap: "8px" }} />
+                        page={pageIndex}
+                        onChange={(_, value) => setPageIndex(value)} variant="outlined" shape="rounded" sx={{ gap: "8px" }} />
                 </div>
             </div>
         </section>
