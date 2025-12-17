@@ -67,6 +67,7 @@ export default function WithdrawlPage({
                     wallet: values.wallet_address,
                     amount: Number(amount),
                     game_provider: values.game_provider,
+                    photoid_number:values.photoid_number
                 }).unwrap();
 
                 setOpen(false);
