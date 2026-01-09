@@ -1,6 +1,5 @@
 // routes/Private.tsx
 import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
 import React from "react";
 import ReduxHydrator from "./ReduxHydrator";
 
@@ -17,14 +16,14 @@ export default async function ServerPrivate({ children }: { children: React.Reac
     const cookieStore = await cookies();
     const access_token = cookieStore.get("access_token")?.value;
 
-    if (!access_token) redirect("/");
+    if (!access_token) return;
 
-    const payload = decodeJwt(access_token);
-    if (!payload || !payload.exp || payload.exp < Math.floor(Date.now() / 1000)) {
-        redirect("/");
-    }
+    // const payload = decodeJwt(access_token);
+    // if (!payload || !payload.exp || payload.exp < Math.floor(Date.now() / 1000)) {
+    //     redirect("/");
+    // }
 
-    
+
     // const user = payload; 
 
     return (
