@@ -11,7 +11,7 @@ import { useCreateMenuMutation, useGetAllMenuQuery } from "@/services/menuApi";
 
 export default function MenuPage() {
 
-    const { data, isLoading } = useGetAllPageQuery({ page: 1, per_page: 30 });
+    const { data, isLoading } = useGetAllPageQuery({ pageIndex: 1, per_page: 30 });
     const [createMenu, { isLoading: updatingMenu }] = useCreateMenuMutation();
     const { data: menus, isLoading: loadingMenu } = useGetAllMenuQuery();
     const dispatch = useAppDispatch();
