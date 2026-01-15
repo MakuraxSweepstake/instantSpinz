@@ -1,17 +1,17 @@
 "use client";
 
-import React from "react";
-import { useGetAllPageQuery } from "@/services/pageApi";
-import { motion, AnimatePresence } from "framer-motion";
-import { CloseCircle } from "@wandersonalwes/iconsax-react";
-import { Button } from "@mui/material";
 import { useAppDispatch } from "@/hooks/hook";
-import { showToast, ToastVariant } from "@/slice/toastSlice";
 import { useCreateMenuMutation, useGetAllMenuQuery } from "@/services/menuApi";
+import { useGetAllPageQuery } from "@/services/pageApi";
+import { showToast, ToastVariant } from "@/slice/toastSlice";
+import { Button } from "@mui/material";
+import { CloseCircle } from "@wandersonalwes/iconsax-react";
+import { AnimatePresence, motion } from "framer-motion";
+import React from "react";
 
 export default function MenuPage() {
 
-    const { data, isLoading } = useGetAllPageQuery({ pageIndex: 1, per_page: 30 });
+    const { data, isLoading } = useGetAllPageQuery({ pageIndex: 1, pageSize: 30 });
     const [createMenu, { isLoading: updatingMenu }] = useCreateMenuMutation();
     const { data: menus, isLoading: loadingMenu } = useGetAllMenuQuery();
     const dispatch = useAppDispatch();
