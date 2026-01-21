@@ -379,7 +379,7 @@ export default function WithdrawlModal({
                         variant="contained"
                         color="primary"
                         className="!mt-3"
-                        disabled={!formik.values.wallet_address}
+                        disabled={!formik.dirty}
                     >
                         Withdraw Now
                     </Button>
