@@ -13,6 +13,7 @@ export interface CommonPlayerProps {
     password: string;
     password_confirmation: string;
     role?: string;
+    pob?: string;
 }
 export interface PlayerProps extends CommonPlayerProps {
     id?: string;

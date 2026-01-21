@@ -463,3 +463,7 @@ input[type=number] {
 .MuiPickersSectionList-root {
 	padding: 12px 16px !important;
 }
+
+#billing_state {
+	text-align: left;
+}

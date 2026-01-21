@@ -19,6 +19,7 @@ export interface User {
     street: string;
     zip_code: string;
     role: RoleProps;
+    pob?: string;
 }
 
 export interface LoginResponse {
