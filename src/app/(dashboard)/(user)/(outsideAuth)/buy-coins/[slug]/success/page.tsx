@@ -1,11 +1,17 @@
-import GlassWrapper from '@/components/molecules/GlassWrapper'
-import Image from 'next/image'
-import Link from 'next/link'
-import React from 'react'
+"use client";
 
+import GlassWrapper from "@/components/molecules/GlassWrapper";
+import { usePaymentVerification } from "@/hooks/usePaymentVerification";
+import Image from "next/image";
+import Link from "next/link";
+import { useParams } from "next/navigation";
 
-export default async function PaymentSuccess({ params }: { params: Promise<{ slug: number }> }) {
-    const { slug } = await params
+export default function PaymentSuccess() {
+    const { slug } = useParams<{ slug: string }>();
+
+    usePaymentVerification({
+        type: "success",
+    });
 
     return (
         <GlassWrapper className="max-w-[520px] mx-auto flex flex-col gap-3 items-center text-center p-6">
@@ -16,13 +22,12 @@ export default async function PaymentSuccess({ params }: { params: Promise<{ slu
                 height={140}
             />
 
-            <h1 className="text-[24px] lg:text-[32px] leading-[120%] font-bold mb-4 text-green-500">
+            <h1 className="text-[24px] lg:text-[32px] font-bold text-green-500">
                 Payment Successful 🎉
             </h1>
 
-            <p className="text-[14px] leading-[150%] font-normal lg:text-[16px] mb-4">
-                Your payment was processed successfully. You’ll be redirected to the game
-                page shortly.
+            <p className="text-[14px] lg:text-[16px]">
+                Your payment was processed successfully.
             </p>
 
             <Link
@@ -30,8 +35,7 @@ export default async function PaymentSuccess({ params }: { params: Promise<{ slu
                 className="ss-btn bg-primary-grad"
             >
                 View Game Detail
-
             </Link>
         </GlassWrapper>
-    )
+    );
 }

@@ -1,8 +1,8 @@
+import { TransactionStatusProps } from "@/components/pages/dashboard/adminDashboard/transaction/TransactionTable";
+import { QueryParams } from "@/types/config";
+import { DepositListProps, DepositProps, DepositResponseProps } from "@/types/transaction";
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { baseQuery } from "./baseQuery";
-import { DepositListProps, DepositProps, DepositResponseProps, DepositUrlProps } from "@/types/transaction";
-import { QueryParams } from "@/types/config";
-import { TransactionStatusProps } from "@/components/pages/dashboard/adminDashboard/transaction/TransactionTable";
 
 export const transactionApi = createApi({
     reducerPath: "transactionApi",
@@ -81,7 +81,21 @@ export const transactionApi = createApi({
             },
             providesTags: ["Withdrawl", "Deposit"]
         }),
+        verifyPayment: builder.mutation<{ valid: boolean }, { paymentId: string, type: "success" | "error" | "expired" }>({
+            query: ({ paymentId, type }) => ({
+                url: `/api/finix/verify/${paymentId}`,
+                method: "POST",
+                body: { type }
+            })
+        }),
     })
 })
 
-export const { useDepositMutation, useGetAllDepositQuery, useWithdrawlMutation, useGetAllWithdrawlQuery, useGetAllTransactionQuery } = transactionApi;
+export const {
+    useDepositMutation,
+    useGetAllDepositQuery,
+    useWithdrawlMutation,
+    useGetAllWithdrawlQuery,
+    useGetAllTransactionQuery,
+    useVerifyPaymentMutation
+} = transactionApi;

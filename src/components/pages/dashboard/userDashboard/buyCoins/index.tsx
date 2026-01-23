@@ -33,13 +33,10 @@ export default function BuyCoinGameListPage({
                 {games.data?.data.map((game) => {
                     const info = gameInfo[game.provider.toLowerCase()] || { balance: 0, type: 'sc' }
                     const CoinIcon = info.type === 'gc' ? GoldCoinIcon : SilverCoinIcon
-                    console.log(info.has_changed_password)
-
                     return (
                         <div key={game.id} className={`col-span-1 ${info.type === 'gc' ? "hidden" : ""}`}>
                             <GlassWrapper
                                 className="coin__card px-6 py-4"
-
                             >
                                 <div className="coin__detail">
                                     <div className="flex gap-4 items-center mb-4">
