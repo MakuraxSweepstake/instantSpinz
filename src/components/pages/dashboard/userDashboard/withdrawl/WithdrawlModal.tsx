@@ -579,7 +579,7 @@ export default function WithdrawlModal({
                         className="!mt-3"
                         disabled={!formik.dirty}
                     >
-                        Withdraw Now
+                        {isLoading ? "Processing..." : "Withdraw Now"}
                     </Button> : ""}
                 </form>
 
