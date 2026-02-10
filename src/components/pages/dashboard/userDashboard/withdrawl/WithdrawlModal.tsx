@@ -1,12 +1,59 @@
 import GlassWrapper from "@/components/molecules/GlassWrapper";
 import { US_STATES } from "@/constants/state";
+import { useAppDispatch } from "@/hooks/hook";
 import BitCoinIcon from "@/icons/BitCoinIcon";
-import { Box, Button, InputLabel, MenuItem, Modal, OutlinedInput, Select } from "@mui/material";
-import { BitcoinRefresh, SecuritySafe, TickCircle } from "@wandersonalwes/iconsax-react";
+import { useGetMassPayPaymentFieldsMutation, useGetMassPayPaymentMethodsQuery } from "@/services/transaction";
+import { showToast, ToastVariant } from "@/slice/toastSlice";
+import { MasspayPaymentFields } from "@/types/transaction";
+import { Box, Button, Grow, InputLabel, MenuItem, Modal, OutlinedInput, Select } from "@mui/material";
+import { BitcoinRefresh, InfoCircle, Money, SecuritySafe, TickCircle } from "@wandersonalwes/iconsax-react";
 import { FormikProps } from "formik";
 import Image from "next/image";
-import React from "react";
+import Link from "next/link";
+import React, { useMemo, useState } from "react";
 import { WithdrawlFormValues } from ".";
+import { RenderFields } from "./renderFields";
+
+const ShimmerCard = () => (
+    <div className="col-span-1">
+        <GlassWrapper>
+            <div className="py-5 px-4 flex justify-between items-center animate-pulse">
+                <div className="flex items-center gap-2 flex-1">
+                    <div className="w-5 h-5 bg-white/20 rounded-full"></div>
+                    <div className="h-4 bg-white/20 rounded w-24"></div>
+                </div>
+                <div className="w-5 h-5 bg-white/20 rounded-full"></div>
+            </div>
+        </GlassWrapper>
+    </div>
+);
+
+const FeeInfoBlock = ({ fee, methodName }: { fee: number; methodName: string }) => (
+    <Grow in timeout={400}>
+        <div className="mb-4 p-4 rounded-xl 
+            bg-gradient-to-r 
+            from-yellow-200/40 
+            via-yellow-100/30 
+            to-amber-200/30 
+            border-l-4 border-yellow-300 
+            backdrop-blur-sm">
+            <div className="flex items-start gap-3">
+                <div className="flex-shrink-0 mt-0.5">
+                    <InfoCircle size={20} className="text-[#FBA027]" variant="Bold" />
+                </div>
+                <div className="flex-1">
+                    <div className="flex items-center justify-between flex-wrap gap-2 mb-1">
+                        <h4 className="text-sm font-semibold text-white/90">Transaction Fee</h4>
+                        <span className="text-yellow-300  font-bold text-base">${fee.toFixed(2)}</span>
+                    </div>
+                    <p className="text-xs text-white/60 leading-relaxed text-start">
+                        A fee of <span className="text-yellow-300  font-medium">${fee.toFixed(2)}</span> will be charged for this <span className="text-white/80 font-medium">{methodName}</span> transaction.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </Grow>
+);
 
 const formFieldSx = {
     '& .MuiOutlinedInput-root, & .MuiPickersInputBase-root, & .MuiPickersOutlinedInput-root': {
@@ -52,15 +99,26 @@ export default function WithdrawlModal({
     open,
     handleClose,
     formik,
-    wallet
-
+    wallet,
+    isLoading
 }: {
     open: boolean;
     handleClose: () => void;
     formik: FormikProps<WithdrawlFormValues>;
     wallet: string;
+    isLoading: boolean;
 }) {
+    const dispatch = useAppDispatch();
+    const [fields, setFields] = useState<MasspayPaymentFields[]>([]);
     const [isEditing, setIsEditing] = React.useState(false);
+    const { data: withdrawlOptions, isLoading: loadingWithdrawlOptions } = useGetMassPayPaymentMethodsQuery();
+    const [getMassPayFields, { isLoading: gettingFields }] = useGetMassPayPaymentFieldsMutation();
+
+
+    const selectedMethod = useMemo(() => {
+        if (!formik.values.type || !withdrawlOptions?.data) return null;
+        return withdrawlOptions.data.find(option => option.destination_token === formik.values.type);
+    }, [formik.values.type, withdrawlOptions]);
 
     React.useEffect(() => {
         if (open) {
@@ -76,8 +134,52 @@ export default function WithdrawlModal({
 
     const handleTypeChange = (value: string) => {
         formik.setFieldValue("type", value);
+        formik.setFieldValue("payment_fields", {});
+        setFields([]);
     };
 
+    const handleMasspayTypeChange = (value: string) => {
+        formik.setFieldValue("masspay_type", value);
+        formik.setFieldValue("payment_fields", {});
+        setFields([]);
+    };
+
+
+    const handleContinueWithdrawl = async () => {
+        if (!formik.values.masspay_type) {
+            dispatch(
+                showToast({
+                    message: "Please select a payment method",
+                    variant: ToastVariant.ERROR
+                })
+            );
+            return;
+        }
+
+        try {
+            const response = await getMassPayFields({ token: formik.values.masspay_type }).unwrap();
+            const fetchedFields = response?.data || [];
+
+            setFields(fetchedFields);
+
+            formik.setFieldValue(
+                "payment_fields",
+                fetchedFields.map((item) => ({
+                    ...item,
+                    value: item.value || "",
+                }))
+            );
+
+
+        } catch (e: any) {
+            dispatch(
+                showToast({
+                    message: e?.data?.message || "Failed to get payment fields. Please try again.",
+                    variant: ToastVariant.ERROR
+                })
+            );
+        }
+    };
     return (
         <Modal open={open} onClose={handleClose}>
             <Box
@@ -99,13 +201,13 @@ export default function WithdrawlModal({
                 }}
             >
                 {/* Wallet Banner */}
-                <Image
+                {/* <Image
                     src={"/assets/images/wallet-featured-image.png"}
                     alt=""
                     width={174}
                     height={140}
                     className="mx-auto"
-                />
+                /> */}
 
                 <span className="py-2 px-3 rounded-3xl bg-[#DBFBF6] border border-[#426A66] text-[#426A66] flex justify-center items-center max-w-fit mx-auto my-4 lg:my-6">
                     <SecuritySafe />
@@ -121,7 +223,7 @@ export default function WithdrawlModal({
                 </p>
 
                 <form onSubmit={formik.handleSubmit} className="flex flex-col gap-3">
-                    <div className="grid sm:grid-cols-2 mb-8 gap-6">
+                    <div className="grid sm:grid-cols-2 lg:grid-cols-3 mb-8 gap-6">
                         <div className="col-span-1">
                             <GlassWrapper>
                                 <div
@@ -149,6 +251,22 @@ export default function WithdrawlModal({
                                         AuxVault
                                     </span>
                                     {formik.values.type === "auxvault" ? (
+                                        <TickCircle className="text-green-400" />
+                                    ) : ""}
+                                </div>
+                            </GlassWrapper>
+                        </div>
+                        <div className="col-span-1">
+                            <GlassWrapper>
+                                <div
+                                    className="py-5 px-4 flex justify-between items-center cursor-pointer transition-all hover:bg-white/5"
+                                    onClick={() => handleTypeChange("masspay")}
+                                >
+                                    <span className="text-[12px] flex items-center justify-start gap-2 max-w-[80%] text-start">
+                                        <Money />
+                                        Masspay
+                                    </span>
+                                    {formik.values.type === "masspay" ? (
                                         <TickCircle className="text-green-400" />
                                     ) : ""}
                                 </div>
@@ -202,7 +320,8 @@ export default function WithdrawlModal({
                                 )}
                             </div>
                         </div>
-                    </> : <div className="flex flex-col gap-2 md:grid md:grid-cols-2">
+                    </> : ""}
+                    {formik.values.type === "auxvault" ? <div className="flex flex-col gap-2 md:grid md:grid-cols-2">
                         <div className="relative">
                             <InputLabel htmlFor="customer_name" className="text-start">Name<span className="text-red-500">*</span></InputLabel>
                             <OutlinedInput
@@ -370,11 +489,90 @@ export default function WithdrawlModal({
                                     <span className="error text-start">{formik.errors.billing_state || ""}</span> : null
                             }
                         </div>
+                    </div> : ""}
 
+                    {formik.values.type === "masspay" ?
+                        <>
+                            <div className="grid sm:grid-cols-2 md:grid-cols-3 mb-8 gap-6">
+                                {loadingWithdrawlOptions && (
+                                    <>
+                                        <ShimmerCard />
+                                        <ShimmerCard />
+                                    </>
+                                )}
+                                {!loadingWithdrawlOptions && withdrawlOptions?.data && withdrawlOptions?.data?.length > 0 &&
+                                    withdrawlOptions?.data?.map((option) => (
+                                        <div className="col-span-1" key={option?.id}>
+                                            <GlassWrapper>
+                                                <div
+                                                    className="py-5 px-4 flex justify-between items-center cursor-pointer transition-all hover:bg-white/5 h-full"
+                                                    onClick={() => handleMasspayTypeChange(option?.destination_token)}
+                                                >
+                                                    <span className="text-[12px] flex items-center justify-start gap-2 max-w-[80%] text-start">
+                                                        {option.thumbnail_url ? <Image src={option?.thumbnail_url} alt={option?.name} width={120} height={40} className="object-contain max-w-16" /> : <BitcoinRefresh />}
+                                                        <span>
+                                                            {option?.name}
+                                                        </span>
+                                                    </span>
+                                                    {formik.values.masspay_type === option?.destination_token ? (
+                                                        <TickCircle className="text-green-400" />
+                                                    ) : ""}
+                                                </div>
 
-                    </div>}
+                                            </GlassWrapper>
+                                        </div>
+                                    ))
+                                }
+                            </div>
+                            {selectedMethod && (
+                                <FeeInfoBlock
+                                    fee={selectedMethod.fee}
+                                    methodName={selectedMethod.name}
+                                />
+                            )}
+                            {fields.length > 0 ? (
+                                <div className="flex flex-col md:grid grid-cols-2 gap-4">
+                                    {fields.map((field) => (
+                                        <div className={field.type === "IDSelfieCollection" ? "col-span-2" : "col-span-1"} key={field.token}>
+                                            {field.type === "IDSelfieCollection" ? <Link href={field.value} className="bg-primary-grad ss-btn">{field.label}</Link> : <RenderFields field={field} formik={formik} />}
+                                        </div>
+                                    ))}
+                                </div>
 
-                    <Button
+                            ) : ""}
+                        </>
+                        : ""}
+
+                    {formik.values.type === "masspay" ? <>
+                        {fields.length === 0 ?
+                            <>
+                                <Button
+                                    variant="contained"
+                                    color="primary"
+                                    className="!mt-3"
+                                    onClick={handleContinueWithdrawl}
+                                    disabled={!formik.values.type || gettingFields}
+                                >
+                                    {gettingFields ? "Loading Fields..." : "Continue Withdrawal"}
+                                </Button>
+                            </>
+                            :
+                            <>
+
+                                <div className="flex gap-3 mt-4">
+                                    <Button
+                                        variant="contained"
+                                        color="primary"
+                                        fullWidth
+                                        type="submit"
+                                        disabled={!formik.dirty}
+                                    >
+                                        {isLoading ? "Processing..." : "Withdraw Now"}
+                                    </Button>
+                                </div>
+                            </>}</> : ""}
+
+                    {formik.values.type !== "masspay" ? <Button
                         type="submit"
                         variant="contained"
                         color="primary"
@@ -382,7 +580,7 @@ export default function WithdrawlModal({
                         disabled={!formik.dirty}
                     >
                         Withdraw Now
-                    </Button>
+                    </Button> : ""}
                 </form>
 
                 {/* Powered by */}

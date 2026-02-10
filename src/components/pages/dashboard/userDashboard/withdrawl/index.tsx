@@ -1,10 +1,11 @@
 "use client";
 
 import { useAppDispatch, useAppSelector } from "@/hooks/hook";
-import { useWithdrawlMutation } from "@/services/transaction";
+import { useSubmitMassPayPaymentFieldsMutation, useWithdrawlMutation } from "@/services/transaction";
 import { showToast, ToastVariant } from "@/slice/toastSlice";
 import { openPasswordDialog } from "@/slice/updatePasswordSlice";
 import { GameResponseProps } from "@/types/game";
+import { MasspayPaymentFields } from "@/types/transaction";
 import { Button, OutlinedInput } from "@mui/material";
 import { CardPos } from "@wandersonalwes/iconsax-react";
 import { useFormik } from "formik";
@@ -17,15 +18,15 @@ import WithdrawlModal from "./WithdrawlModal";
 const validationSchema = Yup.object({
     withdrawl_amounts: Yup.object().test(
         "min-amount",
-        "Amount must be greater than $2",
+        "Amount must be greater than $40",
         (value) => {
             if (!value) return true;
             return Object.values(value).every(
-                (v) => v === "" || Number(v) >= 2
+                (v) => v === "" || Number(v) >= 40
             );
         }
     ),
-    type: Yup.string().oneOf(["auxvault", "tryspeed"]).required(),
+    type: Yup.string().oneOf(["auxvault", "tryspeed", "masspay"]).required(),
     photoid_number: Yup.string().when("type", {
         is: "tryspeed",
         then: (schema) => schema.required("SSN is required"),
@@ -90,7 +91,7 @@ export type WithdrawlFormValues = {
     withdrawl_amounts: Record<string, number | "">;
     wallet_address: string;
     photoid_number: string;
-    type: "auxvault" | "tryspeed";
+    type: "auxvault" | "tryspeed" | "masspay";
     customer_name: string;
     customer_email: string;
     phone_number: string;
@@ -101,6 +102,31 @@ export type WithdrawlFormValues = {
     billing_address: string;
     billing_city: string;
     billing_state: string;
+    masspay_type: string;
+    payment_fields: MasspayPaymentFields[];
+};
+
+
+export const validateDynamicField = (
+    field: MasspayPaymentFields,
+    value?: string
+): string | undefined => {
+    if (!value || value.trim() === "") {
+        return `${field.label} is required`;
+    }
+
+    if (field.validation && field.input_type !== "options") {
+        try {
+            const regex = new RegExp(field.validation, "u");
+            if (!regex.test(value)) {
+                return `Invalid ${field.label}`;
+            }
+        } catch {
+            return `Invalid ${field.label}`;
+        }
+    }
+
+    return undefined;
 };
 
 export default function WithdrawlPage({
@@ -115,7 +141,9 @@ export default function WithdrawlPage({
     const gameInfo = coins?.data?.game_information || {};
     const dispatch = useAppDispatch();
 
-    const [withdrawMoney, { isLoading: widthdrawing }] = useWithdrawlMutation();
+    const [withdrawMoney, { isLoading: withdrawing }] = useWithdrawlMutation();
+
+    const [withdrawMoneyWithMasspay, { isLoading }] = useSubmitMassPayPaymentFieldsMutation();
 
     const formik = useFormik<WithdrawlFormValues>({
         initialValues: {
@@ -134,28 +162,28 @@ export default function WithdrawlPage({
             billing_address: user?.address || "",
             billing_city: user?.city || "",
             billing_state: user?.pob || "",
+            masspay_type: "",
+            payment_fields: []
         },
         validationSchema,
         enableReinitialize: true,
         onSubmit: async (values) => {
             try {
                 const amount = values.withdrawl_amounts[values.game_provider];
-
-                // Build payload based on type
                 const basePayload = {
                     wallet: values.wallet_address,
                     amount: Number(amount),
                     game_provider: values.game_provider,
-                    type: values.type,
                 };
 
-                // Add type-specific fields
-                const payload = values.type === "tryspeed"
+                const payload: any = values.type === "tryspeed"
                     ? {
                         ...basePayload,
                         photoid_number: values.photoid_number,
+                        type: values.type,
+
                     }
-                    : {
+                    : values.type === "auxvault" ? {
                         ...basePayload,
                         customer_name: values.customer_name,
                         customer_email: values.customer_email,
@@ -167,9 +195,50 @@ export default function WithdrawlPage({
                         billing_address: values.billing_address,
                         billing_city: values.billing_city,
                         billing_state: values.billing_state,
+                        type: values.type,
+                    } : {
+                        ...basePayload,
+                        type: values.masspay_type
                     };
 
-                const response = await withdrawMoney(payload).unwrap();
+                const fieldErrors: Record<string, string> = {};
+                let hasErrors = false;
+
+                values.payment_fields.forEach((field) => {
+                    const error = validateDynamicField(field, field.value);
+                    if (error) {
+                        fieldErrors[field.token] = error;
+                        hasErrors = true;
+                    }
+                });
+
+                if (hasErrors) {
+                    formik.setErrors({
+                        ...formik.errors,
+                        payment_fields: fieldErrors as any
+                    });
+
+                    dispatch(
+                        showToast({
+                            message: "Please fill in all required fields correctly",
+                            variant: ToastVariant.ERROR,
+                        })
+                    );
+                    return;
+                }
+
+
+                if (values.type === "masspay" && formik.values.payment_fields.length > 0) {
+                    payload.values = formik.values.payment_fields;
+                }
+                let response = null;
+
+                if (values.type === "masspay") {
+                    response = await withdrawMoneyWithMasspay(payload).unwrap();
+                }
+                else {
+                    response = await withdrawMoney(payload).unwrap();
+                }
 
                 setOpen(false);
                 dispatch(
@@ -205,7 +274,7 @@ export default function WithdrawlPage({
         if (balance < 2) {
             dispatch(
                 showToast({
-                    message: "Insufficient balance to withdraw (Min $2 required)",
+                    message: "Insufficient balance to withdraw (Min $40 required)",
                     variant: ToastVariant.ERROR,
                 })
             );
@@ -366,6 +435,7 @@ export default function WithdrawlPage({
                 handleClose={() => setOpen(false)}
                 formik={formik}
                 wallet={user?.wallet_address || ""}
+                isLoading={withdrawing || isLoading}
             />
         </section>
     );
