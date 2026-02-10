@@ -18,11 +18,11 @@ import WithdrawlModal from "./WithdrawlModal";
 const validationSchema = Yup.object({
     withdrawl_amounts: Yup.object().test(
         "min-amount",
-        "Amount must be greater than $40",
+        "Amount must be greater than $2",
         (value) => {
             if (!value) return true;
             return Object.values(value).every(
-                (v) => v === "" || Number(v) >= 40
+                (v) => v === "" || Number(v) >= 2
             );
         }
     ),
