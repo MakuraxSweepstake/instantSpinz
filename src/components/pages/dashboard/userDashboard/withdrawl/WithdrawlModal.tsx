@@ -566,6 +566,7 @@ export default function WithdrawlModal({
                                         fullWidth
                                         type="submit"
                                         disabled={!formik.dirty}
+                                        onClick={() => formik.handleSubmit()}
                                     >
                                         {isLoading ? "Processing..." : "Withdraw Now"}
                                     </Button>

@@ -230,11 +230,12 @@ export default function WithdrawlPage({
 
                 if (values.type === "masspay" && formik.values.payment_fields.length > 0) {
                     payload.values = formik.values.payment_fields;
+                    payload.type = formik.values.masspay_type
                 }
                 let response = null;
 
                 if (values.type === "masspay") {
-                    response = await withdrawMoneyWithMasspay(payload).unwrap();
+                    response = await withdrawMoneyWithMasspay({ body: payload, token: values.masspay_type }).unwrap();
                 }
                 else {
                     response = await withdrawMoney(payload).unwrap();
