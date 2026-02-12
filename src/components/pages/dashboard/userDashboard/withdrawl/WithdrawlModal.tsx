@@ -1,11 +1,10 @@
 import GlassWrapper from "@/components/molecules/GlassWrapper";
-import { US_STATES } from "@/constants/state";
 import { useAppDispatch } from "@/hooks/hook";
 import BitCoinIcon from "@/icons/BitCoinIcon";
 import { useGetMassPayPaymentFieldsMutation, useGetMassPayPaymentMethodsQuery } from "@/services/transaction";
 import { showToast, ToastVariant } from "@/slice/toastSlice";
 import { MasspayPaymentFields } from "@/types/transaction";
-import { Box, Button, Grow, InputLabel, MenuItem, Modal, OutlinedInput, Select } from "@mui/material";
+import { Box, Button, Grow, InputLabel, Modal, OutlinedInput } from "@mui/material";
 import { BitcoinRefresh, InfoCircle, Money, SecuritySafe, TickCircle } from "@wandersonalwes/iconsax-react";
 import { FormikProps } from "formik";
 import Image from "next/image";
@@ -240,7 +239,7 @@ export default function WithdrawlModal({
                                 </div>
                             </GlassWrapper>
                         </div>
-                        <div className="col-span-1">
+                        {/* <div className="col-span-1">
                             <GlassWrapper>
                                 <div
                                     className="py-5 px-4 flex justify-between items-center cursor-pointer transition-all hover:bg-white/5"
@@ -255,7 +254,7 @@ export default function WithdrawlModal({
                                     ) : ""}
                                 </div>
                             </GlassWrapper>
-                        </div>
+                        </div> */}
                         <div className="col-span-1">
                             <GlassWrapper>
                                 <div
@@ -321,7 +320,8 @@ export default function WithdrawlModal({
                             </div>
                         </div>
                     </> : ""}
-                    {formik.values.type === "auxvault" ? <div className="flex flex-col gap-2 md:grid md:grid-cols-2">
+
+                    {/* {formik.values.type === "auxvault" ? <div className="flex flex-col gap-2 md:grid md:grid-cols-2">
                         <div className="relative">
                             <InputLabel htmlFor="customer_name" className="text-start">Name<span className="text-red-500">*</span></InputLabel>
                             <OutlinedInput
@@ -489,7 +489,7 @@ export default function WithdrawlModal({
                                     <span className="error text-start">{formik.errors.billing_state || ""}</span> : null
                             }
                         </div>
-                    </div> : ""}
+                    </div> : ""} */}
 
                     {formik.values.type === "masspay" ?
                         <>
