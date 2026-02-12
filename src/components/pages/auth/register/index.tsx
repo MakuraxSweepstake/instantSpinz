@@ -157,6 +157,7 @@ export default function RegisterPage() {
                     router.replace(response?.data?.redirect_url || "");
                 }
                 catch (e: any) {
+                    console.log(e);
                     dispatch(
                         showToast({
                             message: e?.data?.message || "Unable to register user. Try again later",
@@ -182,7 +183,7 @@ export default function RegisterPage() {
                 </div>
 
                 <form action="" onSubmit={handleSubmit}>
-                    <div className="grid md:grid-cols-2 lg:grid-cols-6 gap-x-3 gap-y-5">
+                    <div className="flex flex-col md:grid grid-cols-2 md:grid-cols-2 lg:grid-cols-6 gap-x-3 gap-y-5">
                         {/* First Name */}
                         <div className="col-span-2 lg:col-span-2">
                             <div className="input__field">
