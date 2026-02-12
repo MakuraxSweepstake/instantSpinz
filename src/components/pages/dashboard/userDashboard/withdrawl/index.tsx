@@ -151,7 +151,7 @@ export default function WithdrawlPage({
             withdrawl_amounts: {},
             wallet_address: user?.wallet_address || "",
             photoid_number: "",
-            type: "tryspeed",
+            type: "masspay",
             customer_name: user?.name || "",
             customer_email: user?.email || "",
             phone_number: user?.phone || "",

@@ -1,6 +1,5 @@
 import GlassWrapper from "@/components/molecules/GlassWrapper";
 import { useAppDispatch } from "@/hooks/hook";
-import BitCoinIcon from "@/icons/BitCoinIcon";
 import { useGetMassPayPaymentFieldsMutation, useGetMassPayPaymentMethodsQuery } from "@/services/transaction";
 import { showToast, ToastVariant } from "@/slice/toastSlice";
 import { MasspayPaymentFields } from "@/types/transaction";
@@ -223,7 +222,7 @@ export default function WithdrawlModal({
 
                 <form onSubmit={formik.handleSubmit} className="flex flex-col gap-3">
                     <div className="grid sm:grid-cols-2 lg:grid-cols-3 mb-8 gap-6">
-                        <div className="col-span-1">
+                        {/* <div className="col-span-1">
                             <GlassWrapper>
                                 <div
                                     className="py-5 px-4 flex justify-between items-center cursor-pointer transition-all hover:bg-white/5"
@@ -238,7 +237,7 @@ export default function WithdrawlModal({
                                     ) : ""}
                                 </div>
                             </GlassWrapper>
-                        </div>
+                        </div> */}
                         {/* <div className="col-span-1">
                             <GlassWrapper>
                                 <div
