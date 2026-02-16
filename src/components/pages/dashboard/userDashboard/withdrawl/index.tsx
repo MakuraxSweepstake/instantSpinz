@@ -2,6 +2,7 @@
 
 import { useAppDispatch, useAppSelector } from "@/hooks/hook";
 import { useSubmitMassPayPaymentFieldsMutation, useWithdrawlMutation } from "@/services/transaction";
+import { useGetVerificationLinkMutation, useVerifyUserForWithdrawlMutation } from "@/services/userApi";
 import { showToast, ToastVariant } from "@/slice/toastSlice";
 import { openPasswordDialog } from "@/slice/updatePasswordSlice";
 import { GameResponseProps } from "@/types/game";
@@ -10,7 +11,8 @@ import { Button, OutlinedInput } from "@mui/material";
 import { CardPos } from "@wandersonalwes/iconsax-react";
 import { useFormik } from "formik";
 import Image from "next/image";
-import React from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import React, { useEffect } from "react";
 import * as Yup from "yup";
 import WithdrawlModal from "./WithdrawlModal";
 
@@ -140,8 +142,12 @@ export default function WithdrawlPage({
     const user = useAppSelector((state) => state.auth.user);
     const gameInfo = coins?.data?.game_information || {};
     const dispatch = useAppDispatch();
+    const searchParams = useSearchParams();
+    const router = useRouter();
 
     const [withdrawMoney, { isLoading: withdrawing }] = useWithdrawlMutation();
+    const [verifyUserForWithdrawl, { isLoading: verifying }] = useGetVerificationLinkMutation();
+    const [verifyUser] = useVerifyUserForWithdrawlMutation();
 
     const [withdrawMoneyWithMasspay, { isLoading }] = useSubmitMassPayPaymentFieldsMutation();
 
@@ -240,7 +246,7 @@ export default function WithdrawlPage({
                 else {
                     response = await withdrawMoney(payload).unwrap();
                 }
-
+                // window.open(response?.data?.redirect_url);
                 setOpen(false);
                 dispatch(
                     showToast({
@@ -248,8 +254,6 @@ export default function WithdrawlPage({
                         variant: ToastVariant.SUCCESS,
                     })
                 );
-
-                // Reset form after successful submission
                 formik.resetForm();
             } catch (e: any) {
                 console.error("Withdrawal error:", e);
@@ -262,6 +266,63 @@ export default function WithdrawlPage({
             }
         },
     });
+
+    const handleVerify = async () => {
+        try {
+            const response = await verifyUserForWithdrawl().unwrap();
+            const url = response?.data?.data;
+
+            if (url) {
+                window.open(url, "_blank", "noopener,noreferrer");
+            }
+            dispatch(
+                showToast({
+                    message: response?.message || "Verified successfully!",
+                    variant: ToastVariant.SUCCESS,
+                })
+            );
+        } catch (e: any) {
+            dispatch(
+                showToast({
+                    message: e?.data?.message || "Couldn't Verify.",
+                    variant: ToastVariant.ERROR,
+                })
+            );
+        }
+    }
+
+
+    useEffect(() => {
+        const token = searchParams.get("token");
+
+        if (!token) return;
+
+        const verify = async () => {
+            try {
+                const response = await verifyUser({ token }).unwrap();
+
+                dispatch(
+                    showToast({
+                        message: response?.message || "Verified successfully!",
+                        variant: ToastVariant.SUCCESS,
+                    })
+                );
+            } catch (e: any) {
+                dispatch(
+                    showToast({
+                        message: e?.data?.message || "Couldn't Verify.",
+                        variant: ToastVariant.ERROR,
+                    })
+                );
+            } finally {
+                router.replace("/withdrawl");
+            }
+        };
+
+        verify();
+    }, [searchParams, verifyUser, dispatch, router]);
+
+
 
     const handleWithdrawlChange = (provider: string, value: string) => {
         const parsedValue = value === "" ? "" : Number(value);
@@ -400,8 +461,13 @@ export default function WithdrawlPage({
                                 </div>
 
                                 {/* Withdraw Button */}
-                                <div className="lg:col-span-1 text-end">
+                                <div className="lg:col-span-1 text-end flex justify-end gap-2">
+                                    <Button variant="contained"
+                                        disabled={info?.can_withdraw}
+                                        onClick={() => handleVerify()}
+                                        color="primary" className="md:!max-w-fit !text-[#426A66]">{verifying ? "Verifying User" : "Verify First"}</Button>
                                     <Button
+                                        disabled={!info?.can_withdraw}
                                         variant="contained"
                                         color="secondary"
                                         className="md:!max-w-fit !text-[#426A66]"

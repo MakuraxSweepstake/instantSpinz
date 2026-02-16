@@ -15,7 +15,7 @@ export interface DepositUrlProps {
     currency: string;
     payment_url: string;
     merchant_id: string;
-
+    redirect_url?: string;
 }
 
 

@@ -56,6 +56,7 @@ export const userApi = createApi({
             },
             providesTags: ['user']
         }),
+
         getUserGameBalance: builder.query<SinlgePlayerResponseProps, void>({
             query: () => ({
                 url: "/api/detail/get-balance",
@@ -63,6 +64,7 @@ export const userApi = createApi({
             }),
             providesTags: ['user']
         }),
+
         getUserGameCredentials: builder.query<CredentialsResponseProps, void>({
             query: () => ({
                 url: `/api/credentials`,
@@ -70,6 +72,7 @@ export const userApi = createApi({
             }),
             providesTags: ['user']
         }),
+
         changeUserGamePassword: builder.mutation<GlobalResponse, { password: string; confirm_password: string, name: string }>({
             query: ({ password, confirm_password, name }) => ({
                 url: `/api/change-password?for=${name}`,
@@ -81,6 +84,7 @@ export const userApi = createApi({
             }),
             invalidatesTags: ['user', "wallet"],
         }),
+
         updateUserGamePassword: builder.mutation<GlobalResponse, { password: string; provider: string }>({
             query: ({ password, provider }) => ({
                 url: `/api/game/change-password`,
@@ -92,6 +96,7 @@ export const userApi = createApi({
             }),
             invalidatesTags: ['user', "wallet"],
         }),
+
         getGamesPasswordStatus: builder.query<{ data: { has_changed_password: boolean } }, { provider: string }>({
             query: ({ provider }) => ({
                 url: `/api/game/${provider}/has-changed-password`,
@@ -99,8 +104,31 @@ export const userApi = createApi({
             }),
             providesTags: ['user', "wallet"],
         }),
+
+        verifyUserForWithdrawl: builder.mutation<GlobalResponse & {
+            data: {
+                redirect_url: string;
+            }
+        }, { token?: string }>({
+            query: ({ token }) => ({
+                url: `/api/payment/verify-user${token ? `?token=${token}` : ""}`,
+                method: "POST"
+            }),
+            invalidatesTags: ["user"]
+        }),
+        getVerificationLink: builder.mutation<GlobalResponse & {
+            data: {
+                data: string;
+            }
+        }, void>({
+            query: () => ({
+                url: `/api/payment/verify-user`,
+                method: "GET"
+            }),
+            invalidatesTags: ["user"]
+        })
     })
 
 })
 
-export const { useAddUserWalletMutation, useUpdateUserProfileMutation, useGetUserBalanceQuery, useGetUserBalanceBySlugQuery, useGetUserGameBalanceQuery, useGetUserGameCredentialsQuery, useChangeUserGamePasswordMutation, useUpdateUserGamePasswordMutation, useGetGamesPasswordStatusQuery } = userApi;
+export const { useAddUserWalletMutation, useUpdateUserProfileMutation, useGetUserBalanceQuery, useGetUserBalanceBySlugQuery, useGetUserGameBalanceQuery, useGetUserGameCredentialsQuery, useChangeUserGamePasswordMutation, useUpdateUserGamePasswordMutation, useGetGamesPasswordStatusQuery, useVerifyUserForWithdrawlMutation, useGetVerificationLinkMutation } = userApi;

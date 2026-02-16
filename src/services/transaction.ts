@@ -121,7 +121,9 @@ export const transactionApi = createApi({
                 method: "GET"
             })
         }),
-        submitMassPayPaymentFields: builder.mutation<GlobalResponse, SubmitMassPayRequest>({
+        submitMassPayPaymentFields: builder.mutation<GlobalResponse & {
+            data: { redirect_url: string }
+        }, SubmitMassPayRequest>({
             query: ({ token, body }) => ({
                 url: `/api/payment/fields?token=${token}`,
                 method: "POST",
@@ -129,6 +131,7 @@ export const transactionApi = createApi({
             }),
             invalidatesTags: ["Withdrawl"]
         }),
+       
     })
 })
 

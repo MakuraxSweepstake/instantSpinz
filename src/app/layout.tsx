@@ -1,12 +1,12 @@
+import { pageSEO } from "@/serverApi/game";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import React from "react";
 import "./globals.css";
 import ProviderWrapper from "./ProviderWrapper";
-import { AgeChecker } from "./AgeChecker";
-import TopLoader from "./TopLoader";
-import React from "react";
-import { pageSEO } from "@/serverApi/game";
 import { SeonProvider } from "./SeonProvider";
+import TopLoader from "./TopLoader";
+import Script from "next/script";
 
 const metadata: Metadata = {
   title: "Sweepstake",
@@ -52,12 +52,12 @@ export default function RootLayout({
       {/* className="dark" */}
       <body className={`${inter.className} scroll-smooth`} cz-shortcut-listen="true">
         <SeonProvider>
-        <ProviderWrapper>
-          <React.Suspense fallback={<div />}>
-            <TopLoader />
-          </React.Suspense>
-          {children}
-        </ProviderWrapper>
+          <ProviderWrapper>
+            <React.Suspense fallback={<div />}>
+              <TopLoader />
+            </React.Suspense>
+            {children}
+          </ProviderWrapper>
         </SeonProvider>
       </body>
     </html>
