@@ -275,7 +275,7 @@ export default function WithdrawlPage({
         if (balance < 2) {
             dispatch(
                 showToast({
-                    message: "Insufficient balance to withdraw (Min $40 required)",
+                    message: "Insufficient balance to withdraw (Min $2 required)",
                     variant: ToastVariant.ERROR,
                 })
             );
