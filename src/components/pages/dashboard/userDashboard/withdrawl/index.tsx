@@ -279,6 +279,7 @@ export default function WithdrawlPage({
                 showToast({
                     message: response?.message || "Verified successfully!",
                     variant: ToastVariant.SUCCESS,
+                    autoTime: true
                 })
             );
         } catch (e: any) {
