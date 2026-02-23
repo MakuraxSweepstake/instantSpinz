@@ -468,7 +468,6 @@ export default function WithdrawlPage({
                                         onClick={() => handleVerify()}
                                         color="primary" className="md:!max-w-fit ">{verifying ? "Verifying User" : "Verify First"}</Button>
                                     <Button
-                                        disabled={!info?.can_withdraw}
                                         variant="contained"
                                         color="secondary"
                                         className="md:!max-w-fit !text-[#426A66]"
