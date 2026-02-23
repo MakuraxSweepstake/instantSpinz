@@ -9,9 +9,10 @@ import { validateDynamicField } from ".";
 interface RenderFieldsProps {
     field: MasspayPaymentFields;
     formik: FormikProps<any>;
+    disabled?: boolean;
 }
 
-export const RenderFields = ({ field, formik }: RenderFieldsProps) => {
+export const RenderFields = ({ field, formik, disabled }: RenderFieldsProps) => {
     const fieldIndex = formik.values.payment_fields?.findIndex(
         (f: MasspayPaymentFields) => f.token === field.token
     );
@@ -79,6 +80,7 @@ export const RenderFields = ({ field, formik }: RenderFieldsProps) => {
                 <div className="input__field text-left">
                     <InputLabel>{field.label} <span className="text-red-500">*</span></InputLabel>
                     <OutlinedInput
+                        disabled={disabled}
                         fullWidth
                         id={field.token}
                         name={`payment_fields.${field.token}`}
@@ -101,6 +103,7 @@ export const RenderFields = ({ field, formik }: RenderFieldsProps) => {
                     <InputLabel>{field.label} <span className="text-red-500">*</span></InputLabel>
                     <FormControl fullWidth error={Boolean(fieldError)}>
                         <Select
+                            disabled={disabled}
                             id={field.token}
                             name={`payment_fields.${field.token}`}
                             value={fieldValue}
@@ -130,6 +133,8 @@ export const RenderFields = ({ field, formik }: RenderFieldsProps) => {
                     <div className="input__field text-left">
                         <InputLabel>{field.label} <span className="text-red-500">*</span></InputLabel>
                         <OutlinedInput
+                            disabled={disabled}
+
                             fullWidth
                             id={field.token}
                             name={`payment_fields.${field.token}`}
@@ -151,6 +156,7 @@ export const RenderFields = ({ field, formik }: RenderFieldsProps) => {
                         <InputLabel>{field.label} <span className="text-red-500">*</span></InputLabel>
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
                             <DatePicker
+                                disabled={disabled}
                                 value={fieldValue ? dayjs(fieldValue) : null}
                                 onChange={(newValue) => handleChange(newValue)}
                                 onClose={handleBlur}
@@ -249,6 +255,7 @@ export const RenderFields = ({ field, formik }: RenderFieldsProps) => {
                 <div className="input__field text-left">
                     <InputLabel>{field.label} <span className="text-red-500">*</span></InputLabel>
                     <OutlinedInput
+                        disabled={disabled}
                         fullWidth
                         id={field.token}
                         name={`payment_fields.${field.token}`}
