@@ -27,7 +27,7 @@ export const PlayerValidationSchema = (isEdit: boolean) => Yup.object().shape({
         .required("Phone is required"),
     password: isEdit
         ? Yup.string().nullable() // not required in edit mode
-        : Yup.string().min(6, "Password must be at least 6 characters").required("Password is required"),
+        : Yup.string().min(9, "Password must be at least 9 characters").required("Password is required"),
     password_confirmation: Yup.string().when("password", {
         is: (val: string) => !!val, // required only if password is filled
         then: (schema) => schema.oneOf([Yup.ref("password")], "Passwords must match").required("Password confirmation is required"),

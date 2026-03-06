@@ -291,6 +291,7 @@ export default function AddPlayerForm({ formik, id, data, loading, buttonLabel }
 
                 <div className="input__field">
                     <PasswordField
+                        required={id ? false : true}
                         name="password"
                         label="Password*"
                         placeholder="Enter password"
@@ -303,8 +304,9 @@ export default function AddPlayerForm({ formik, id, data, loading, buttonLabel }
 
                 <div className="input__field">
                     <PasswordField
+                        required={id ? false : true}
                         name="password_confirmation"
-                        label="Confirm Password*"
+                        label="Confirm Password"
                         placeholder="Confirm password"
                         value={formik.values.password_confirmation}
                         onChange={formik.handleChange}
