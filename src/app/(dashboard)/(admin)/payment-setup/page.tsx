@@ -1,12 +1,11 @@
 "use client";
-import React from 'react';
-import { useFormik } from 'formik';
-import * as Yup from 'yup';
-import { InputLabel, OutlinedInput, Button } from '@mui/material';
 import PageHeader from '@/components/molecules/PageHeader';
-import { showToast, ToastVariant } from '@/slice/toastSlice';
 import { useAppDispatch } from '@/hooks/hook';
 import { useCreatePaymentSetupMutation, useGetPaymentSetupQuery } from '@/services/paymentSetupApi';
+import { showToast, ToastVariant } from '@/slice/toastSlice';
+import { Button, InputLabel, OutlinedInput } from '@mui/material';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
 
 export default function PaymentSetup() {
     const dispatch = useAppDispatch();
@@ -45,7 +44,7 @@ export default function PaymentSetup() {
             catch (e: any) {
                 dispatch(
                     showToast({
-                        message: e.message || "Error Updating Paymnet Setting",
+                        message: e?.data?.message || "Error Updating Paymnet Setting",
                         variant: ToastVariant.ERROR
                     })
                 )

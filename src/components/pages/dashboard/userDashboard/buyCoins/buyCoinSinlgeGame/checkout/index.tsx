@@ -103,12 +103,12 @@ export default function CheckoutPage({ amount, slug, bonus }: {
                         <Button type='submit' variant='contained' color='primary' className='!mt-3' onClick={async () => {
                             try {
                                 // if (currentPaymentMode === "crypto") {
-                                    const response = await getPaymentLink({
-                                        id: slug,
-                                        amount,
-                                        type: currentPaymentMode as PaymentModeProps
-                                    }).unwrap();
-                                    router.replace(response?.data?.payment_url)
+                                const response = await getPaymentLink({
+                                    id: slug,
+                                    amount,
+                                    type: currentPaymentMode as PaymentModeProps
+                                }).unwrap();
+                                router.replace(response?.data?.payment_url)
                                 // }
                                 // else if (currentPaymentMode === "idem") {
                                 //     const response = await getPaymentLink({
@@ -157,7 +157,7 @@ export default function CheckoutPage({ amount, slug, bonus }: {
                             catch (e: any) {
                                 dispatch(
                                     showToast({
-                                        message: e.message || "Something went wrong",
+                                        message: e?.data?.message || "Something went wrong",
                                         variant: ToastVariant.ERROR
                                     })
                                 )
