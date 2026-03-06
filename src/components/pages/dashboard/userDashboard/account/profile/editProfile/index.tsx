@@ -5,19 +5,15 @@ import { useAppDispatch, useAppSelector } from '@/hooks/hook';
 import { useUpdateUserProfileMutation } from '@/services/userApi';
 import { setTokens } from '@/slice/authSlice';
 import { showToast, ToastVariant } from '@/slice/toastSlice';
-import { initialPlayerValues, PlayerItem, SinlgePlayerResponseProps } from '@/types/player';
+import { initialPlayerValues, PlayerItem } from '@/types/player';
+import dayjs, { Dayjs } from 'dayjs';
 import { useFormik } from 'formik';
-import { useRouter } from 'next/navigation';
-import React from 'react'
 
 export default function EditUserProfile({ id, buttonLabel }: { id: string, buttonLabel?: string; }) {
-
     const dispatch = useAppDispatch();
-    const router = useRouter();
     const [updateUserProfile, { isLoading }] = useUpdateUserProfileMutation();
     const user = useAppSelector((state) => state?.auth.user);
     const access_token = useAppSelector((state) => state?.auth.access_token);
-
 
 
     const formik = useFormik({
@@ -33,10 +29,14 @@ export default function EditUserProfile({ id, buttonLabel }: { id: string, butto
             password: '',
             password_confirmation: '',
             profile_image: null,
+            dob: user.dob || null as Dayjs | null,
+            zip_code: user.zip_code || "",
+            pob: user.pob || "",
         } : initialPlayerValues,
-        validationSchema: PlayerValidationSchema(!!user?.id),
+        validationSchema: PlayerValidationSchema(user?.id ? true : false),
         enableReinitialize: true,
         onSubmit: async (values) => {
+            const formattedDob = values.dob ? dayjs(values.dob).format('YYYY-MM-DD') : '';
             const formData = new FormData();
             formData.append("name", values.name);
             formData.append("email", values.email);
@@ -44,10 +44,14 @@ export default function EditUserProfile({ id, buttonLabel }: { id: string, butto
             formData.append("last_name", values.last_name);
             formData.append("password", values.password);
             formData.append("password_confirmation", values.password_confirmation);
+
             if (values.wallet_address) formData.append("wallet_address", values.wallet_address);
             if (values.address) formData.append("address", values.address);
             if (values.city) formData.append("city", values.city);
             if (values.phone) formData.append("phone", values.phone);
+            if (values.dob) formData.append("dob", formattedDob);
+            if (values.zip_code) formData.append("zip_code", values.zip_code);
+            if (values.pob) formData.append("pob", values.pob);
 
             if (values.profile_image) {
                 if (Array.isArray(values.profile_image)) {
@@ -72,7 +76,7 @@ export default function EditUserProfile({ id, buttonLabel }: { id: string, butto
                 dispatch(
                     setTokens({
                         access_token: access_token,
-                        user: response?.data?.data,
+                        user: { ...user, ...response?.data?.data },
                     }),
                 );
             }
@@ -106,6 +110,7 @@ export default function EditUserProfile({ id, buttonLabel }: { id: string, butto
                 total_withdrawl: user.total_withdrawl ?? undefined,
                 total_deposited: user.total_deposited ?? undefined,
                 profile_image_file: user.profile_image_file ?? undefined,
+                dob: user.dob ? dayjs(user.dob).format('YYYY-MM-DD') : undefined,
             } as PlayerItem,
         }
         : undefined;

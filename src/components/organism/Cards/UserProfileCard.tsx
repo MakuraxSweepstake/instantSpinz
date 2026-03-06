@@ -1,10 +1,10 @@
 "use client";
 import GlassWrapper from '@/components/molecules/GlassWrapper';
 import { useAppSelector } from '@/hooks/hook';
-import EditIcon from '@/icons/EditIcon'
+import EditIcon from '@/icons/EditIcon';
 import { formatDateTime } from '@/utils/formatDateTime';
-import Image from 'next/image'
-import React from 'react'
+import Image from 'next/image';
+import AgeGate from '../dialog/AgeGate';
 
 export default function UserProfileCard({ balance, loading }: { balance: any; loading?: boolean }) {
     const user = useAppSelector(state => state?.auth.user);
@@ -61,6 +61,8 @@ export default function UserProfileCard({ balance, loading }: { balance: any; lo
                             </div>
                         </div>
                     </div>
+
+                    <AgeGate />
                     {/* <div className="col-span-2 flex flex-col sm:flex-row gap-2">
                         <div className="w-full  rounded-[14px] p-4 lg:py-6 flex justify-center sm:block text-left sm:text-center gap-3" style={{ background: "rgba(191, 26, 198, 0.10)" }}>
                             <Image src={"/assets/images/deposit.svg"} alt='' width={48} height={48} className='sm:mx-auto' />

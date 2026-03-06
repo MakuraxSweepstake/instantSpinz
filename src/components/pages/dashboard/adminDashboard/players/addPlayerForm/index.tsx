@@ -1,17 +1,13 @@
 "use client"
 
-import InputFile from '@/components/atom/InputFile'
-import PasswordField from '@/components/molecules/PasswordField'
 import { useAppDispatch } from '@/hooks/hook'
-import { PATH } from '@/routes/PATH'
 import { useCreatePlayerMutation, useGetPlayerByIdQuery, useUpdatePlayerByIdMutation } from '@/services/playerApi'
 import { showToast, ToastVariant } from '@/slice/toastSlice'
 import { initialPlayerValues } from '@/types/player'
-import { Button, Input, InputLabel, OutlinedInput } from '@mui/material'
+import dayjs from 'dayjs'
 import { useFormik } from 'formik'
 import { useRouter } from 'next/navigation'
-import React from 'react'
-import * as Yup from "yup";
+import * as Yup from "yup"
 import AddPlayerForm from './AddPlayerForm'
 
 export const PlayerValidationSchema = (isEdit: boolean) => Yup.object().shape({
@@ -22,11 +18,13 @@ export const PlayerValidationSchema = (isEdit: boolean) => Yup.object().shape({
     first_name: Yup.string().required("First name is required"),
     last_name: Yup.string().required("Last name is required"),
     wallet_address: Yup.string().nullable(),
-    address: Yup.string().nullable(),
-    city: Yup.string().nullable(),
+    address: Yup.string().required("Address is required"),
+    city: Yup.string().required("City is required"),
+    zip_code: Yup.string().required("Zip code is required"),
+    pob: Yup.string().required("State is required"),
     phone: Yup.string()
         .matches(/^\+?\d{7,15}$/, "Invalid phone number")
-        .nullable(),
+        .required("Phone is required"),
     password: isEdit
         ? Yup.string().nullable() // not required in edit mode
         : Yup.string().min(6, "Password must be at least 6 characters").required("Password is required"),
@@ -35,6 +33,14 @@ export const PlayerValidationSchema = (isEdit: boolean) => Yup.object().shape({
         then: (schema) => schema.oneOf([Yup.ref("password")], "Passwords must match").required("Password confirmation is required"),
         otherwise: (schema) => schema.nullable(),
     }),
+    dob: Yup.date()
+        .required("Date of birth is required")
+        .max(new Date(), 'Date of birth cannot be in the future')
+        .test('age', 'You must be at least 21 years old', function (value) {
+            if (!value) return true;
+            const cutoff = dayjs().subtract(21, 'years');
+            return dayjs(value).isBefore(cutoff);
+        }),
     // profile_image: Yup.mixed().required("Profile is required"),
 });
 export default function AddPlayerPage({ id }: { id?: string }) {
@@ -77,7 +83,9 @@ export default function AddPlayerPage({ id }: { id?: string }) {
             if (values.address) formData.append("address", values.address);
             if (values.city) formData.append("city", values.city);
             if (values.phone) formData.append("phone", values.phone);
-
+            if (values.dob) formData.append("dob", values.dob.toString());
+            if (values.zip_code) formData.append("zip_code", values.zip_code);
+            if (values.pob) formData.append("pob", values.pob);
             if (values.profile_image) {
                 if (Array.isArray(values.profile_image)) {
                     values.profile_image.forEach((file) => formData.append("profile_image", file));

@@ -68,6 +68,7 @@ export default function WithdrawlPage({
     const dispatch = useAppDispatch();
 
     const [withdrawMoney, { isLoading }] = useSubmitMassPayPaymentFieldsMutation();
+    // const [verifyBeforePayment, { isLoading: isVerifyLoading }] = useVerifyBeforePaymentMutation();
 
     const formik = useFormik<WithdrawlFormValues>({
         initialValues: {
@@ -293,38 +294,60 @@ export default function WithdrawlPage({
                                         <span className="text-[8px] lg:text-[10px]">Min $2.0</span>
                                     </div>
 
-                                    {/* Withdraw Button */}
-                                    {game.provider !== "goldcoincity" && (
-                                        <div className="lg:col-span-1 text-end">
-                                            <Button
-                                                variant="contained"
-                                                color="secondary"
-                                                className="md:!max-w-fit !text-[#426A66]"
-                                                startIcon={<CardPos />}
-                                                // disabled={info.available < 40}
-                                                onClick={() => {
-                                                    if (info?.has_changed_password) {
-                                                        dispatch(openPasswordDialog({
-                                                            provider: game?.provider,
-                                                        }));
+                                    <div className="flex justify-end items-center gap-4">
+                                        {/* <Button variant="contained"
+                                            onClick={async () => {
+                                                try {
+                                                    const response = await verifyBeforePayment();
+                                                    if (response?.data?.data?.link) {
+                                                        window.open(response?.data?.data?.link, "_blank");
                                                     }
-                                                    else {
-                                                        handleWithdrawClick(
-                                                            Number(
-                                                                formik.values.withdrawl_amounts[
+                                                }
+                                                catch (e: any) {
+                                                    dispatch(
+                                                        showToast({
+                                                            message: e?.data?.message || "Error Fetching Link",
+                                                            variant: ToastVariant.ERROR
+                                                        })
+                                                    )
+                                                }
+                                            }}
+                                            color="primary" className="max-w-fit" disabled={isVerifyLoading}>
+                                            {isVerifyLoading ? "Verifying..." : "Verify First"}
+                                        </Button> */}
+                                        {/* Withdraw Button */}
+                                        {game.provider !== "goldcoincity" && (
+                                            <div className="lg:col-span-1 text-end">
+                                                <Button
+                                                    variant="contained"
+                                                    color="secondary"
+                                                    className="md:!max-w-fit !text-[#426A66]"
+                                                    startIcon={<CardPos />}
+                                                    // disabled={info.available < 40}
+                                                    onClick={() => {
+                                                        if (info?.has_changed_password) {
+                                                            dispatch(openPasswordDialog({
+                                                                provider: game?.provider,
+                                                            }));
+                                                        }
+                                                        else {
+                                                            handleWithdrawClick(
+                                                                Number(
+                                                                    formik.values.withdrawl_amounts[
+                                                                    game.provider
+                                                                    ] || 0
+                                                                ),
                                                                 game.provider
-                                                                ] || 0
-                                                            ),
-                                                            game.provider
-                                                        );
-                                                    }
-                                                }}
-                                                type="button"
-                                            >
-                                                Withdraw
-                                            </Button>
-                                        </div>
-                                    )}
+                                                            );
+                                                        }
+                                                    }}
+                                                    type="button"
+                                                >
+                                                    Withdraw
+                                                </Button>
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
                             );
                         })}

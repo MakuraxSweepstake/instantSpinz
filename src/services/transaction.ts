@@ -131,7 +131,12 @@ export const transactionApi = createApi({
             }),
             invalidatesTags: ["Withdrawl"]
         }),
-       
+        VerifyBeforePayment: builder.mutation<GlobalResponse & { data: { link: string } }, void>({
+            query: () => ({
+                url: `/api/payment/veriff`,
+                method: "GET",
+            })
+        }),
     })
 })
 
@@ -144,5 +149,6 @@ export const {
     useVerifyPaymentMutation,
     useGetMassPayPaymentFieldsMutation,
     useGetMassPayPaymentMethodsQuery,
-    useSubmitMassPayPaymentFieldsMutation
+    useSubmitMassPayPaymentFieldsMutation,
+    useVerifyBeforePaymentMutation
 } = transactionApi;
