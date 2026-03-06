@@ -44,7 +44,7 @@ export default function UpdatePassword() {
                 dispatch(
                     showToast({
                         variant: ToastVariant.ERROR,
-                        message: e.message || "Something went wrong"
+                        message: e?.data?.message || "Something went wrong"
                     })
                 )
             }

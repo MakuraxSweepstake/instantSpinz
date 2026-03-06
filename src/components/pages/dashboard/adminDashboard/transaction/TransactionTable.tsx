@@ -183,7 +183,7 @@ export default function TransactionTable({ user_id, game_id, search, setSearch }
                         dispatch(
                             showToast({
                                 variant: ToastVariant.ERROR,
-                                message: e.message || "Unable to download CSV.",
+                                message: e?.data?.message || "Unable to download CSV.",
                             })
                         );
                     }

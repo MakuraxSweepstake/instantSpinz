@@ -59,7 +59,7 @@ export default function NotificationPage({
             catch (e: any) {
                 dispatch(
                     showToast({
-                        message: e.message || "Unable to read notification",
+                        message: e?.data?.message || "Unable to read notification",
                         variant: ToastVariant.ERROR
                     })
                 )
@@ -73,7 +73,7 @@ export default function NotificationPage({
             catch (e: any) {
                 dispatch(
                     showToast({
-                        message: e.message || "Unable to read notification",
+                        message: e?.data?.message || "Unable to read notification",
                         variant: ToastVariant.ERROR
                     })
                 )

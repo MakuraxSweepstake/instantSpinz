@@ -133,7 +133,7 @@ export default function AddGameForm({ id }: AddGameFormProps) {
                 catch (e: any) {
                     dispatch(
                         showToast({
-                            message: e.message,
+                            message: e?.data?.message,
                             variant: ToastVariant.ERROR
                         })
                     )

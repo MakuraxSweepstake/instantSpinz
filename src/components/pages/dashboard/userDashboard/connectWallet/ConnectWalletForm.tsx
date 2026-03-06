@@ -5,7 +5,6 @@ import { useAddUserWalletMutation } from '@/services/userApi'
 import { showToast, ToastVariant } from '@/slice/toastSlice'
 import { Button, OutlinedInput } from '@mui/material'
 import { useFormik } from 'formik'
-import React from 'react'
 import * as yup from 'yup'
 
 
@@ -35,7 +34,7 @@ export default function ConnectWalletForm() {
             catch (e: any) {
                 dispatch(
                     showToast({
-                        message: e.message || "Unable to connect wallet. Try Again Later",
+                        message: e?.data?.message || "Unable to connect wallet. Try Again Later",
                         variant: ToastVariant.ERROR
                     })
                 )

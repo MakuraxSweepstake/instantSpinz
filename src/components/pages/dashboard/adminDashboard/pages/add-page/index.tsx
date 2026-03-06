@@ -83,7 +83,7 @@ export default function AddPageForm({ id }: { id?: string }) {
                     console.error("Error submitting form:", e);
                     dispatch(
                         showToast({
-                            message: e.message || "Something went wrong",
+                            message: e?.data?.message || "Something went wrong",
                             variant: ToastVariant.ERROR
                         })
                     );
@@ -103,7 +103,7 @@ export default function AddPageForm({ id }: { id?: string }) {
                     console.error("Error submitting form:", e);
                     dispatch(
                         showToast({
-                            message: e.message || "Something went wrong",
+                            message: e?.data?.message || "Something went wrong",
                             variant: ToastVariant.ERROR
                         })
                     );

@@ -98,7 +98,7 @@ export default function SiteSetting() {
             catch (e: any) {
                 dispatch(
                     showToast({
-                        message: e.message || "Something Went Wrong",
+                        message: e?.data?.message || "Something Went Wrong",
                         variant: ToastVariant.ERROR
                     })
                 )
